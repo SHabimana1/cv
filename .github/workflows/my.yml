@@ -28,10 +28,10 @@ jobs:
 
       # Runs a single command using the runners shell
       - name: Build image
-        run: docker build -t shabimana1/cv .
+        run: docker build -t ${{secrets.REGISTRY_USER}}/cv .
 
       # Runs a set of commands using the runners shell
       - name: Push image
         run: |
-          docker login -u shabimana1 -p ${{secrets.REGISTRY_PASS}}
-          docker push shabimana1/cv
+          docker login -u ${{secrets.REGISTRY_USER}} -p ${{secrets.REGISTRY_PASS}}
+          docker push ${{secrets.REGISTRY_USER}}/cv
