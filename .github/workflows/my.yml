@@ -21,7 +21,6 @@ jobs:
     steps:
       
       - uses: actions/checkout@v4
-
      
       - name: Build image
         run: |
@@ -33,3 +32,19 @@ jobs:
           docker login -u ${{secrets.REGISTRY_USER}} -p ${{secrets.REGISTRY_PASS}}
           docker push ${{secrets.REGISTRY_USER}}/cv:${{github.run_number}}
           docker push ${{secrets.REGISTRY_USER}}/cv
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+         # port: ${{ secrets.PORT }}
+          script: |
+                  docker rm -f resume
+                  docker run -d --name resume -p 8080:5001 ${{secrets.REGISTRY_USER}}/cv:${{github.run_number}}
+
+                  
